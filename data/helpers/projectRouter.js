@@ -8,6 +8,7 @@ const cm = require('../../middleware/middleware')
 const checkProjectId = cm.checkProjectId
 const checkProject = cm.checkProject
 const checkAction = cm.checkAction
+const checkActionId = cm.checkActionId
 
 
 router.get('/', (req, res) => {
@@ -22,7 +23,13 @@ router.get('/', (req, res) => {
     .catch()
 })
 
+// router.get('/')
+
 router.get('/:id', checkProjectId, (req, res) => {
+    res.status(200).json(req.project)
+})
+
+router.get('/:id/action/:id', checkProjectId, checkActionId, (req, res) => {
     res.status(200).json(req.project)
 })
 
@@ -69,33 +76,13 @@ router.delete('/:id', checkProjectId, (req, res) => {
 router.put('/:id', checkProjectId, checkProject, (req, res) => {
     const id = req.params.id
     projectModel.update(id, { name: req.body.name, description: req.body.description, completed: req.body.completed})
+    .then(() => {
+        res.status(200).json({...req.body,  description: req.body.description, name: req.body.name, completed: req.body.completed})
+    })
     .catch(error => {
         res.status(500).json({error: "there was an error"})
     })
 })
-
-// router.put("/api/posts/:id", (req, res) => {
-//     if(!req.body.title || !req.body.contents) {
-//         return res.status(400).json({
-//             errorMessage: "Please privde title and contents for the post."
-//         })
-//     }
-//     posts
-//     .update(req.params.id, req.body)
-//     .then((post) => {
-//         if(post){
-//             res.status(204).json(post)
-//         }else{
-//             res.status(404).json({
-//                 errorMessage: "please provide title and contents for the post"
-//             })
-//         }
-//     })
-//     .catch((error) => {
-//         console.log(error)
-//         res.status(500).json({error: "The post information could not be modified."})
-//     })
-// })
 
 
 
